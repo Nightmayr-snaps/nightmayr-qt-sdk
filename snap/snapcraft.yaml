@@ -1,5 +1,5 @@
 ---
-name: nightmayr-qt-5-15-4-2004
+name: nightmayr-qt-5-15-4-2004-sdk
 version: 5.15.4
 base: core20
 summary: Shared Qt 5.15
@@ -8,20 +8,6 @@ description: |
  Qt Applications.
 confinement: strict
 grade: stable
-slots:
-    nightmayr-qt-5-15-4-2004:
-      interface: content
-      read:
-        - /
-plugs:
-  nightmayr-kde-plasma-integration-5:
-    default-provider: nightmayr-kde-plasma-integration-5-2004
-    interface: content
-    target: $SNAP/kf5
-  qgnomeplatform:
-    default-provider: qgnomeplatform
-    interface: content
-    target: $SNAP/qgnomeplatform
 architectures:
   - build-on: amd64
   - build-on: arm64
