@@ -1793,3 +1793,4 @@ parts:
       - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libavcodec.so.58*
       - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libavutil.so.56*
       - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libswresample.so.3*
+
