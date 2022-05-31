@@ -1190,8 +1190,6 @@ parts:
       - qtwebsockets
   qtwebengine:
     plugin: nil
-    stage-snaps:
-      - nightmayr-qtwebengine-5-15-9-2004/latest/candidate
     override-build: |
       snap install nightmayr-qtwebengine-5-15-9-2004 --candidate && returncode=$? || returncode=$?
       # This conditional ensures the SDK is built without Webengine for the first revision. 
