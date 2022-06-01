@@ -1191,17 +1191,22 @@ parts:
   qtwebengine:
     plugin: nil
     override-build: |
-      snap install nightmayr-qtwebengine-5-15-9-2004 --candidate && returncode=$? || returncode=$?
-      # This conditional ensures the SDK is built without Webengine for the first revision. 
-      # The QtWebengine snap is then able to use this SDK snap to build Webengine, allowing it to be included in subsequent revisions of this snap.
-      if [ $returncode -ne 0 ]; then
+      if [ $SNAPCRAFT_TARGET_ARCH != "ppc64el" ]; then
+        snap install nightmayr-qtwebengine-5-15-9-2004 --candidate && returncode=$? || returncode=$?
+        # This conditional ensures the SDK is built without Webengine for the first revision.
+        # The QtWebengine snap is then able to use this SDK snap to build Webengine, allowing it to be included in subsequent revisions of this snap.
+        if [ $returncode -ne 0 ]; then
       cat << EOF > "$SNAPCRAFT_PART_INSTALL/qtwebengine-missing.txt"
-      QtWebengine has not been built and included in this revision of the snap. 
+      QtWebengine has not been built and included in this revision of the snap.
       This is likely due to this Qt SDK snap not being available for QtWebengine to use as build dependency preventing it from be built in a separate snap.
       The QtWebengine snap would subsequently be staged from in this QT SDK snap (chicken and egg problem).
       EOF
+        else
+          rsync -a --ignore-existing /snap/nightmayr-qtwebengine-5-15-9-2004/current/ $SNAPCRAFT_PART_INSTALL
+        fi
       else
-        rsync -a --ignore-existing /snap/nightmayr-qtwebengine-5-15-9-2004/current/ $SNAPCRAFT_PART_INSTALL
+        echo "QtWebengine can not be built for ppc64el, skipping"
+        exit 0
       fi
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
