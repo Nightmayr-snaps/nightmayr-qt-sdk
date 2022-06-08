@@ -417,6 +417,8 @@ parts:
       - libzmq5
       - libzvbi0
       - ocl-icd-libopencl1
+      - libglu1-mesa
+      - freeglut3
   qtbase:
     plugin: nil
     override-pull: |
@@ -452,13 +454,6 @@ parts:
 
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL" install
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtbase/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtbase/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtbase/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtbase/src/.git
     stage-packages:
       - libasn1-8-heimdal
       - libatk-bridge2.0-0
@@ -529,13 +524,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtxmlpatterns/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtxmlpatterns/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtxmlpatterns/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtxmlpatterns/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -554,13 +542,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtx11extras/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtx11extras/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtx11extras/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtx11extras/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -579,13 +560,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgamepad/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgamepad/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgamepad/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgamepad/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -604,16 +578,12 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtimageformats/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtimageformats/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtimageformats/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtimageformats/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+    stage-packages:
+      - libmng2
+      - libwebpdemux2
     after:
       - qtbase
   qtnetworkauth:
@@ -629,13 +599,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtnetworkauth/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtnetworkauth/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtnetworkauth/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtnetworkauth/src/.git 
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -654,11 +617,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialport/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialport/src/*   
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -677,13 +635,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtremoteobjects/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtremoteobjects/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtremoteobjects/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtremoteobjects/src/.git  
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -702,13 +653,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsvg/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsvg/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsvg/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsvg/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -727,13 +671,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscript/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscript/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscript/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscript/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -752,13 +689,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdeclarative/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdeclarative/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdeclarative/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdeclarative/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -777,13 +707,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwayland/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwayland/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwayland/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwayland/src/.git 
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -802,16 +725,12 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttools/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttools/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttools/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttools/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+    stage-packages:
+      - libclang1-6.0
+      - libllvm6.0
     after:
       - qtdeclarative
   qtconnectivity:
@@ -827,16 +746,11 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtconnectivity/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtconnectivity/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtconnectivity/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtconnectivity/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+    stage-packages:
+      - libbluetooth3
     after:
       - qtdeclarative
   qtcharts:
@@ -852,13 +766,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtcharts/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtcharts/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtcharts/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtcharts/src/.git   
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -879,14 +786,6 @@ parts:
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT docs
       # make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       # cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      # rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdoc/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdoc/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdoc/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdoc/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -905,13 +804,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlottie/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlottie/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlottie/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlottie/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -930,13 +822,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgraphicaleffects/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgraphicaleffects/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgraphicaleffects/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgraphicaleffects/src/.git    
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -955,16 +840,15 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtmultimedia/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtmultimedia/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtmultimedia/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtmultimedia/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+    stage-packages:
+      - libgstreamer-gl1.0-0
+      - libgstreamer-plugins-base1.0-0
+      - libgstreamer1.0-0
+      - libgudev-1.0-0
+      - liborc-0.4-0
     after:
       - qtdeclarative
   qtquick3d:
@@ -980,13 +864,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquick3d/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquick3d/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquick3d/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquick3d/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1005,13 +882,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickcontrols/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickcontrols/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickkcontols/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickkcontols/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1030,13 +900,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscxml/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscxml/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscxml/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscxml/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1055,13 +918,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquicktimeline/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquicktimeline/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquicktimeline/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquicktimeline/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1080,13 +936,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsensors/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsensors/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsensors/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsensors/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1105,13 +954,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebchannel/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebchannel/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebchannel/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebchannel/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1130,13 +972,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebsockets/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebsockets/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebsockets/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebsockets/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1155,13 +990,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qt3d/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qt3d/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qt3d/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qt3d/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1181,13 +1009,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickconrols2/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickconrols2/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickconrols2/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickconrols2/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1207,13 +1028,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlocation/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlocation/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlocation/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlocation/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1233,13 +1047,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdatavis3d/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdatavis3d/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdatavis3d/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdatavis3d/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1258,13 +1065,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtspeech/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtspeech/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtspeech/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtspeech/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1283,13 +1083,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialbus/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialbus/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialbus/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialbus/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1308,13 +1101,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttranslations/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttranslations/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttranslations/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttranslations/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1333,13 +1119,6 @@ parts:
       make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
       cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
       rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebglplugin/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebglplugin/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebglplugin/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebglplugin/src/.git
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
@@ -1368,6 +1147,10 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+    stage-packages:
+      - libnspr4
+      - libnss3
+      - libxtst6
     after:
       - qtlocation
       - qtwebchannel
