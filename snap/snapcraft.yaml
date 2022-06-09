@@ -48,8 +48,9 @@ parts:
 
   # ffmpeg and sdl2
   sdl2:
-    after:
-      - sources
+    after: [ sources ]
+    source: https://github.com/libsdl-org/SDL.git
+    source-tag: release-2.0.18
     plugin: cmake
     cmake-generator: Ninja
     cmake-parameters:
@@ -75,15 +76,14 @@ parts:
       - -DSDL_VIDEO_WAYLAND=ON
       - -DRPATH=OFF
       - -DCLOCK_GETTIME=ON
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/SDL/. $SNAPCRAFT_PART_SRC
     override-build: |
       snapcraftctl build
       rsync -a --ignore-existing $SNAPCRAFT_PART_INSTALL/ /
 
   srt:
-    after:
-      - sources
+    after: [ sources ]
+    source: https://github.com/Haivision/srt.git
+    source-tag: v1.4.4
     plugin: cmake
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
@@ -92,15 +92,14 @@ parts:
       - -DCMAKE_CXX_FLAGS_RELEASE=-s
       - -DENABLE_LOGGING=OFF
       - -DENABLE_STATIC=OFF
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/srt/. $SNAPCRAFT_PART_SRC
     prime:
       - -usr/include
       - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pkgconfig
 
   x264:
-    after:
-      - sources
+    after: [ sources ]
+    source: https://code.videolan.org/videolan/x264.git
+    source-tag: stable
     plugin: autotools
     autotools-configure-parameters:
       - --prefix=/usr
@@ -109,15 +108,14 @@ parts:
       - --enable-strip
       - --libdir=/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
       - --incdir=/usr/include/$SNAPCRAFT_ARCH_TRIPLET
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/x264/. $SNAPCRAFT_PART_SRC
     prime:
       - usr/lib
       - -usr/lib/pkgconfig
 
   aom:
-    after:
-      - sources
+    after: [ sources ]
+    source: https://aomedia.googlesource.com/aom.git
+    source-tag: v3.2.0
     plugin: cmake
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
@@ -130,8 +128,6 @@ parts:
       - -DENABLE_DOCS=0
       - -DENABLE_EXAMPLES=0
       - -DENABLE_TESTS=0
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/aom/. $SNAPCRAFT_PART_SRC
     override-build: |
       ARCHITECTURE=$(dpkg --print-architecture)
       if [ "${ARCHITECTURE}" = "amd64" ]; then
@@ -164,9 +160,9 @@ parts:
       - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pkgconfig
 
   dav1d:
-    after:
-      - sources
-    source: . # not actual source, fetch real source in override-pull step
+    after: [ sources ]
+    source: https://code.videolan.org/videolan/dav1d.git
+    source-tag: 0.9.2
     plugin: meson
     meson-parameters:
       - --prefix=/usr
@@ -174,23 +170,20 @@ parts:
       - --strip
       - -Denable_tools=false
       - -Denable_tests=false
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/dav1d/. $SNAPCRAFT_PART_SRC
     prime:
       - -usr/include
       - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pkgconfig
 
   zimg:
-    after:
-      - sources
+    after: [ sources ]
+    source: https://github.com/sekrit-twc/zimg.git
+    source-tag: release-3.0.3
     plugin: autotools
     autotools-configure-parameters:
       - --prefix=/usr
       - --libdir=/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
       - --includedir=/usr/include
       - --build=$SNAPCRAFT_ARCH_TRIPLET
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/zimg/. $SNAPCRAFT_PART_SRC
     prime:
       - -usr/include
       - -usr/lib/*.a
@@ -198,31 +191,22 @@ parts:
       - -usr/lib/pkgconfig
 
   ffnvcodec:
-    after:
-      - sources
+    after: [ sources ]
+    source: https://github.com/FFmpeg/nv-codec-headers.git
+    source-tag: sdk/10.0
     plugin: make
     make-parameters:
       - PREFIX=/usr
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/nv-codec-headers/. $SNAPCRAFT_PART_SRC
     prime:
       - -usr/include
       - -usr/lib/pkgconfig
 
   # Resemble ubuntu jammy (22.04) ffmpeg build
   ffmpeg:
-    after:
-      - ffnvcodec
-      - aom
-      - dav1d
-      - x264
-      - srt
-      - zimg
-      - sdl2
-      - sources
+    after: [ sources, ffnvcodec, aom, dav1d, x264, srt, zimg, sdl2 ]
+    source: https://git.ffmpeg.org/ffmpeg.git
+    source-tag: release/4.4
     plugin: autotools
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/ffmpeg/. $SNAPCRAFT_PART_SRC
     override-build: |
       ARCHITECTURE=$(dpkg --print-architecture)
       if [ "${ARCHITECTURE}" = "amd64" ]; then
@@ -420,6 +404,7 @@ parts:
       - libglu1-mesa
       - freeglut3
   qtbase:
+    after: [ ffmpeg, patches, mesa ]
     plugin: nil
     override-pull: |
       QT=5_15_4
@@ -506,18 +491,14 @@ parts:
       - libxkbcommon-x11-0
       - libxkbcommon0
       - libxrandr2
-    after:
-      - ffmpeg
-      - patches
-      - sources
-      - mesa
   qtxmlpatterns:
+    after: [ qtbase ]
+    source: git://code.qt.io/qt/qtxmlpatterns.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtxmlpatterns/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -527,15 +508,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtbase   
   qtx11extras:
+    after: [ qtbase ]
+    source: git://code.qt.io/qt/qtx11extras.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtx11extras/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -545,15 +525,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtbase
   qtgamepad:
+    after: [ qtbase ]
+    source: git://code.qt.io/qt/qtgamepad.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtgamepad/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -563,15 +542,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtbase
   qtimageformats:
+    after: [ qtbase ]
+    source: git://code.qt.io/qt/qtimageformats.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtimageformats/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -584,15 +562,14 @@ parts:
     stage-packages:
       - libmng2
       - libwebpdemux2
-    after:
-      - qtbase
   qtnetworkauth:
+    after: [ qtbase ]
+    source: git://code.qt.io/qt/qtnetworkauth.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtnetworkauth/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -602,15 +579,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtbase
   qtserialport:
+    after: [ qtbase ]
+    source: git://code.qt.io/qt/qtserialport.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtserialport/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -620,15 +596,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtbase
   qtremoteobjects:
+    after: [ qtbase ]
+    source: git://code.qt.io/qt/qtremoteobjects.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtremoteobjects/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -638,15 +613,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtbase
   qtsvg:
+    after: [ qtbase ]
+    source: git://code.qt.io/qt/qtsvg.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtsvg/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -656,15 +630,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtbase
   qtscript:
+    after: [ qtbase ]
+    source: git://code.qt.io/qt/qtscript.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtscript/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -674,15 +647,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtbase
   qtdeclarative:
+    after: [ qtxmlpatterns ]
+    source: git://code.qt.io/qt/qtdeclarative.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtdeclarative/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -692,15 +664,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtxmlpatterns
   qtwayland:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtwayland.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtwayland/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -710,15 +681,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qttools:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qttools.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qttools/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -731,15 +701,14 @@ parts:
     stage-packages:
       - libclang1-6.0
       - libllvm6.0
-    after:
-      - qtdeclarative
   qtconnectivity:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtconnectivity.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtconnectivity/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -751,15 +720,14 @@ parts:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
     stage-packages:
       - libbluetooth3
-    after:
-      - qtdeclarative
   qtcharts:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtcharts.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtcharts/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -769,16 +737,15 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qtdoc:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtdoc.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
       - QT_INSTALL_DOCS: $SNAPCRAFT_PART_INSTALL/usr/share/qt5/doc
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtdoc/. $SNAPCRAFT_PART_SRC
     override-build: |
       # $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -query
@@ -789,15 +756,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qtlottie:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtlottie.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtlottie/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -807,15 +773,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qtgraphicaleffects:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtgraphicaleffects.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtgraphicaleffects/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -825,15 +790,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qtmultimedia:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtmultimedia.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtmultimedia/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -849,15 +813,14 @@ parts:
       - libgstreamer1.0-0
       - libgudev-1.0-0
       - liborc-0.4-0
-    after:
-      - qtdeclarative
   qtquick3d:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtquick3d.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtquick3d/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -867,15 +830,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qtquickcontrols:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtquickcontrols.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtquickcontrols/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -885,15 +847,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qtscxml:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtscxml.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtscxml/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -903,15 +864,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qtquicktimeline:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtquicktimeline.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtquicktimeline/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -921,15 +881,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qtsensors:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtsensors.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtsensors/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -939,15 +898,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qtwebchannel:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtwebchannel.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtwebchannel/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -957,15 +915,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qtwebsockets:
+    after: [ qtdeclarative ]
+    source: git://code.qt.io/qt/qtwebsockets.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtwebsockets/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -975,15 +932,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
   qt3d:
+    after: [ qtdeclarative, qtimageformats ]
+    source: git://code.qt.io/qt/qt3d.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qt3d/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -993,16 +949,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
-      - qtimageformats
   qtquickcontrols2:
+    after: [ qtdeclarative, qtquickcontrols ]
+    source: git://code.qt.io/qt/qtquickcontrols2.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtquickcontrols2/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -1012,16 +966,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtdeclarative
-      - qtquickcontrols
   qtlocation:
+    after: [ qtquickcontrols, qtserialport ]
+    source: git://code.qt.io/qt/qtlocation.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtlocation/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -1031,16 +983,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtquickcontrols
-      - qtserialport
   qtdatavis3d:
+    after: [ qtmultimedia ]
+    source: git://code.qt.io/qt/qtdatavis3d.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtdatavis3d/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -1050,15 +1000,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtmultimedia
   qtspeech:
+    after: [ qtmultimedia ]
+    source: git://code.qt.io/qt/qtspeech.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtspeech/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -1068,15 +1017,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtmultimedia
   qtserialbus:
+    after: [ qtserialport ]
+    source: git://code.qt.io/qt/qtserialbus.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtserialbus/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -1086,15 +1034,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtserialport
   qttranslations:
+    after: [ qttools ]
+    source: git://code.qt.io/qt/qttranslations.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qttranslations/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -1104,15 +1051,14 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qttools
   qtwebglplugin:
+    after: [ qtwebsockets ]
+    source: git://code.qt.io/qt/qtwebglplugin.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
       - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
       - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtwebglplugin/. $SNAPCRAFT_PART_SRC
     override-build: |
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
@@ -1122,8 +1068,6 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    after:
-      - qtwebsockets
   qtwebengine:
     plugin: nil
     override-build: |
@@ -1175,15 +1119,6 @@ parts:
   #     build-environment:
   #     - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
   #     - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-  #     override-pull: |
-  #         cp -a $SNAPCRAFT_PART_SRC/../../sources/src/qtwebkit/. $SNAPCRAFT_PART_SRC
-  #     override-stage: |
-  #         snapcraftctl stage
-  #         # Cleanup space on build VM to prevent running out of disk space for later parts
-  #         rm -rf $SNAPCRAFT_STAGE/../parts/qtwebkit/build/*
-  #         rm -rf $SNAPCRAFT_STAGE/../parts/qtwebkit/src/*
-  #         rm -rf $SNAPCRAFT_STAGE/../parts/qtwebkit/build/.git
-  #         rm -rf $SNAPCRAFT_STAGE/../parts/qtwebkit/src/.git
   #     build-packages:
   #     - flex
   #     - libxcb-render0-dev
@@ -1255,52 +1190,6 @@ parts:
   # Launchpad builders timeout internet access so fetching sources in advance
   sources:
       plugin: nil
-      override-pull: |
-          # Qt Sources
-          git clone --recurse-submodules -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtxmlpatterns.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtx11extras.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtgamepad.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtimageformats.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtnetworkauth.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtserialport.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtremoteobjects.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtsvg.git
-          git clone -b v5.15.4-lts --depth=1 git://code.qt.io/qt/qtscript.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtdeclarative.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtwayland.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qttools.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtconnectivity.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtcharts.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtdoc.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtlottie.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtgraphicaleffects.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtmultimedia.git
-          git clone --recurse-submodules -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtquick3d.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtscxml.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtquicktimeline.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtsensors.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtwebchannel.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtwebsockets.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qt3d.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtquickcontrols.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtquickcontrols2.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtlocation.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtdatavis3d.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtspeech.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtserialbus.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qttranslations.git
-          git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qtwebglplugin.git
-          git clone --recurse-submodules --shallow-submodules -b v5.15.9-lts --depth=1 git://code.qt.io/qt/qtwebengine.git
-          # git clone -b v5.212.0-alpha4 --depth=1 git://code.qt.io/qt/qtwebkit.git
-          # ffmpeg and dependencies sources
-          git clone -b release-2.0.18 --depth=1 https://github.com/libsdl-org/SDL.git
-          git clone -b v1.4.4 --depth=1 https://github.com/Haivision/srt.git
-          git clone -b stable --depth=1 https://code.videolan.org/videolan/x264.git
-          git clone -b v3.2.0 --depth=1 https://aomedia.googlesource.com/aom.git
-          git clone -b 0.9.2 --depth=1 https://code.videolan.org/videolan/dav1d.git
-          git clone -b release-3.0.3 --depth=1 https://github.com/sekrit-twc/zimg.git
-          git clone -b sdk/10.0 --depth=1 https://github.com/FFmpeg/nv-codec-headers.git
-          git clone -b release/4.4 --depth=1 https://git.ffmpeg.org/ffmpeg.git
       build-snaps:
       - cmake
       build-packages:
