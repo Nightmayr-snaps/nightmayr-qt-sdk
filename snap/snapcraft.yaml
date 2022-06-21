@@ -575,6 +575,7 @@ parts:
       - libatspi2.0-dev
       # - libavahi-client3
       # - libavahi-common3
+      - libclang-6.0-dev
       - libcups2-dev
       - libegl1-mesa-dev
       # - libepoxy0
@@ -965,8 +966,8 @@ parts:
     prime:
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
-    build-packages:
-      - libclang-6.0-dev
+    # build-packages:
+    #   - libclang-6.0-dev
     stage-packages:
       - libclang1-6.0
       - libllvm6.0
