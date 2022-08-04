@@ -1,7 +1,7 @@
 ---
-name: nightmayr-qt-5-15-4-2004-sdk
-version: 5.15.4
-base: core20
+name: nightmayr-qt-5-15-5-2204-sdk
+version: 5.15.5
+base: core22
 summary: Shared Qt 5.15
 description: |
  This snap contains the necessary libraries required by
@@ -15,12 +15,6 @@ architectures:
   - build-on: ppc64el
 compression: lzo
 parts:
-  patches:
-    plugin: dump
-    source: snap/local/patches
-    source-type: local
-    prime:
-    - -*
   mesa:
     after: []
     plugin: nil
@@ -49,15 +43,15 @@ parts:
   # ffmpeg and sdl2
   sdl2:
     source: https://github.com/libsdl-org/SDL.git
-    source-tag: release-2.0.18
+    source-tag: release-2.0.22
     plugin: cmake
     cmake-generator: Ninja
     cmake-parameters:
       - -DCMAKE_BUILD_TYPE=Release
       - -DCMAKE_INSTALL_PREFIX=/usr
-      - -DCMAKE_C_COMPILER=gcc-10
-      - -DCMAKE_CXX_COMPILER=g++-10
-      - -DLIB_INSTALL_DIR:PATH=/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
+      - -DCMAKE_C_COMPILER=gcc
+      - -DCMAKE_CXX_COMPILER=g++
+      - -DLIB_INSTALL_DIR:PATH=/usr/lib/$CRAFT_ARCH_TRIPLET
       - -DSHARE_INSTALL_PREFIX:PATH=/usr/share
       - -DINCLUDE_INSTALL_DIR:PATH=/usr/include
       - -DSDL_PULSEAUDIO_SHARED=ON
@@ -76,17 +70,17 @@ parts:
       - -DRPATH=OFF
       - -DCLOCK_GETTIME=ON
     override-build: |
-      snapcraftctl build
-      rsync -a --ignore-existing $SNAPCRAFT_PART_INSTALL/ /
+      craftctl default
+      rsync -a --ignore-existing $CRAFT_PART_INSTALL/ /
     build-snaps:
       - cmake
     build-packages:
       - rsync
-      - gcc-10
-      - g++-10
       - libaudio-dev
-      # libdecor
+      - libdecor-0-dev
       # pipewire
+    stage-packages:
+      - libdecor-0-0
 
   srt:
     source: https://github.com/Haivision/srt.git
@@ -101,7 +95,7 @@ parts:
       - -DENABLE_STATIC=OFF
     prime:
       - -usr/include
-      - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pkgconfig
+      - -usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig
 
   x264:
     source: https://code.videolan.org/videolan/x264.git
@@ -112,20 +106,20 @@ parts:
       - --disable-cli
       - --enable-shared
       - --enable-strip
-      - --libdir=/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
-      - --incdir=/usr/include/$SNAPCRAFT_ARCH_TRIPLET
+      - --libdir=/usr/lib/$CRAFT_ARCH_TRIPLET
+      - --incdir=/usr/include/$CRAFT_ARCH_TRIPLET
     prime:
       - usr/lib
       - -usr/lib/pkgconfig
 
   aom:
     source: https://aomedia.googlesource.com/aom.git
-    source-tag: v3.2.0
+    source-tag: v3.4.0
     plugin: cmake
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DCMAKE_BUILD_TYPE=Release
-      - -DCMAKE_INSTALL_LIBDIR=lib/$SNAPCRAFT_ARCH_TRIPLET
+      - -DCMAKE_INSTALL_LIBDIR=lib/$CRAFT_ARCH_TRIPLET
       - -DCMAKE_C_FLAGS_RELEASE=-s
       - -DCMAKE_CXX_FLAGS_RELEASE=-s
       - -DCONFIG_MULTITHREAD=1
@@ -146,10 +140,10 @@ parts:
       else
           EXTRA=""
       fi
-      cmake $SNAPCRAFT_PART_SRC -G Ninja \
+      cmake $CRAFT_PART_SRC -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_INSTALL_PREFIX=$SNAPCRAFT_PART_INSTALL/usr \
-      -DCMAKE_INSTALL_LIBDIR=lib/$SNAPCRAFT_ARCH_TRIPLET \
+      -DCMAKE_INSTALL_PREFIX=$CRAFT_PART_INSTALL/usr \
+      -DCMAKE_INSTALL_LIBDIR=lib/$CRAFT_ARCH_TRIPLET \
       -DCMAKE_C_FLAGS_RELEASE=-s \
       -DCMAKE_CXX_FLAGS_RELEASE=-s \
       -DCONFIG_MULTITHREAD=1 \
@@ -157,18 +151,18 @@ parts:
       -DENABLE_DOCS=0 \
       -DENABLE_EXAMPLES=0 \
       -DENABLE_TESTS=0 ${EXTRA}
-      cmake --build . -- -j${SNAPCRAFT_PARALLEL_BUILD_COUNT}
+      cmake --build . -- -j${CRAFT_PARALLEL_BUILD_COUNT}
       cmake --build . --target install
     build-packages:
       - yasm
     prime:
       - -usr/include
-      - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libaom.a
-      - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pkgconfig
+      - -usr/lib/$CRAFT_ARCH_TRIPLET/libaom.a
+      - -usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig
 
   dav1d:
     source: https://code.videolan.org/videolan/dav1d.git
-    source-tag: 0.9.2
+    source-tag: 1.0.0
     plugin: meson
     meson-parameters:
       - --prefix=/usr
@@ -177,11 +171,12 @@ parts:
       - -Denable_tools=false
       - -Denable_tests=false
     build-packages:
+      - meson
       - doxygen
       - nasm
     prime:
       - -usr/include
-      - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pkgconfig
+      - -usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig
 
   zimg:
     source: https://github.com/sekrit-twc/zimg.git
@@ -189,9 +184,9 @@ parts:
     plugin: autotools
     autotools-configure-parameters:
       - --prefix=/usr
-      - --libdir=/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
+      - --libdir=/usr/lib/$CRAFT_ARCH_TRIPLET
       - --includedir=/usr/include
-      - --build=$SNAPCRAFT_ARCH_TRIPLET
+      - --build=$CRAFT_ARCH_TRIPLET
     prime:
       - -usr/include
       - -usr/lib/*.a
@@ -212,7 +207,7 @@ parts:
   ffmpeg:
     after: [ ffnvcodec, aom, dav1d, x264, srt, zimg, sdl2 ]
     source: https://git.ffmpeg.org/ffmpeg.git
-    source-tag: release/4.4
+    source-tag: release/5.1
     plugin: autotools
     override-build: |
       ARCHITECTURE=$(dpkg --print-architecture)
@@ -230,8 +225,8 @@ parts:
       --disable-static \
       --disable-programs \
       --disable-doc \
-      --libdir=/usr/lib/$SNAPCRAFT_ARCH_TRIPLET \
-      --incdir=/usr/include/$SNAPCRAFT_ARCH_TRIPLET \
+      --libdir=/usr/lib/$CRAFT_ARCH_TRIPLET \
+      --incdir=/usr/include/$CRAFT_ARCH_TRIPLET \
       --arch=$SNAPCRAFT_TARGET_ARCH \
       --enable-avcodec \
       --enable-decoder=h264 \
@@ -301,7 +296,7 @@ parts:
       --enable-frei0r \
       --enable-libx264 ${EXTRA}
       make -j $(nproc)
-      make DESTDIR="$SNAPCRAFT_PART_INSTALL" install
+      make DESTDIR="$CRAFT_PART_INSTALL" install
     build-packages:
       - ladspa-sdk
       - libasound2-dev
@@ -388,9 +383,9 @@ parts:
       - libcairo2
       - libcdio-cdda2
       - libcdio-paranoia2
-      - libcdio18
+      - libcdio19
       - libchromaprint1
-      - libcodec2-0.9
+      - libcodec2-1.0
       - libdatrie1
       - libdc1394-25
       - libdrm2
@@ -409,7 +404,7 @@ parts:
       - libgraphite2-3
       - libgsm1
       - libharfbuzz0b
-      - libicu66
+      - libicu70
       - libiec61883-0
       - libjack-jackd2-0
       - liblilv-0-0
@@ -428,7 +423,7 @@ parts:
       - libpango-1.0-0
       - libpangocairo-1.0-0
       - libpangoft2-1.0-0
-      - libpgm-5.2-0
+      - libpgm-5.3-0
       - libpixman-1-0
       - libpng16-16
       - libpulse0
@@ -461,11 +456,11 @@ parts:
       - libvorbis0a
       - libvorbisenc2
       - libvorbisfile3
-      - libvpx6
-      - libwebp6
+      - libvpx7
+      - libwebp7
       - libwebpmux3
       - libx11-6
-      - libx265-179
+      - libx265-199
       - libxau6
       - libxcb-render0
       - libxcb-shape0
@@ -484,52 +479,56 @@ parts:
       - ocl-icd-libopencl1
       - libglu1-mesa
       - freeglut3
+    stage:
+    - -./usr/lib/$CRAFT_ARCH_TRIPLET/libaom.so.*
+    - -./usr/lib/$CRAFT_ARCH_TRIPLET/libdav1d.so.*
   qtbase:
-    after: [ ffmpeg, patches, mesa ]
+    after: [ ffmpeg, mesa ]
     plugin: nil
     override-pull: |
-      QT=5_15_4
-      git clone -b v5.15.4-lts-lgpl --depth=1 git://code.qt.io/qt/qt5.git .
+      QT=5_15_5
+      git clone -b v5.15.5-lts-lgpl --depth=1 git://code.qt.io/qt/qt5.git .
       perl init-repository --module-subset=qtbase
       git submodule update qtbase
 
       cd qtbase
-      find $SNAPCRAFT_STAGE/qtbase_${QT} -type f -print0 | sort -z | xargs -r0 git apply
+      find $CRAFT_PROJECT_DIR/snap/local/patches/qtbase_${QT} -type f -print0 | sort -z | xargs -r0 git apply
     override-build: |
       ./configure \
           -prefix /usr \
           -bindir /usr/lib/qt5/bin \
-          -libdir /usr/lib/$SNAPCRAFT_ARCH_TRIPLET \
+          -libdir /usr/lib/$CRAFT_ARCH_TRIPLET \
           -docdir /usr/share/qt5/doc \
-          -headerdir /usr/include/$SNAPCRAFT_ARCH_TRIPLET/qt5 \
+          -headerdir /usr/include/$CRAFT_ARCH_TRIPLET/qt5 \
           -datadir /usr/share/qt5 \
-          -archdatadir /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5 \
-          -plugindir /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/plugins \
-          -importdir /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/imports \
+          -archdatadir /usr/lib/$CRAFT_ARCH_TRIPLET/qt5 \
+          -plugindir /usr/lib/$CRAFT_ARCH_TRIPLET/qt5/plugins \
+          -importdir /usr/lib/$CRAFT_ARCH_TRIPLET/qt5/imports \
           -translationdir /usr/share/qt5/translations \
-          -hostdatadir /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5 \
+          -hostdatadir /usr/lib/$CRAFT_ARCH_TRIPLET/qt5 \
           -sysconfdir /etc/xdg \
-          -examplesdir /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/examples \
+          -examplesdir /usr/lib/$CRAFT_ARCH_TRIPLET/qt5/examples \
           -release \
           -opensource \
           -confirm-license \
           -nomake examples \
           -nomake tests \
-          -I $SNAPCRAFT_STAGE/usr/include \
-          -L $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET
+          -I $CRAFT_STAGE/usr/include \
+          -L $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET
 
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL" install
-    override-stage: |
-      snapcraftctl stage
+      make -j$CRAFT_PARALLEL_BUILD_COUNT
+      make INSTALL_ROOT="$CRAFT_PART_INSTALL" install
+    override-stage: &override-stage-steps |
+      craftctl default
       # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtbase/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtbase/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtbase/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtbase/src/.git
+      echo "Removing build and src directories"
+      rm -rf $CRAFT_STAGE/../parts/$CRAFT_PART_NAME/build/*
+      rm -rf $CRAFT_STAGE/../parts/$CRAFT_PART_NAME/src/*
+      rm -rf $CRAFT_STAGE/../parts/$CRAFT_PART_NAME/build/.git
+      rm -rf $CRAFT_STAGE/../parts/$CRAFT_PART_NAME/src/.git
     build-packages:
       - libatspi2.0-dev
-      - libclang-6.0-dev
+      - libclang-dev
       - libcups2-dev
       - libdbus-1-dev
       - libegl1-mesa-dev
@@ -564,7 +563,7 @@ parts:
       - libxkbcommon-x11-dev
       - libxkbcommon-dev
       - libxrandr-dev
-      - llvm-6.0
+      - llvm-dev
       - unixodbc-dev
     stage-packages:
       - libasn1-8-heimdal
@@ -589,7 +588,7 @@ parts:
       - libinput10
       - libjpeg-turbo8
       - libkrb5-26-heimdal
-      - libldap-2.4-2
+      - libldap-2.5-0
       - libltdl7
       - libmtdev1
       - libmysqlclient21
@@ -601,7 +600,7 @@ parts:
       - libsasl2-2
       - libsm6
       - libsqlite3-0
-      - libssl1.1
+      - libssl3
       - libsybdb5
       - libudev1
       - libvulkan1
@@ -631,46 +630,26 @@ parts:
     source: git://code.qt.io/qt/qtxmlpatterns.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtxmlpatterns/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtxmlpatterns/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtxmlpatterns/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtxmlpatterns/src/.git
+    build-environment: &buildenv
+      - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    override-build: &qtbuild |
+      $CRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET/qt5/qt.conf"
+      make -j$CRAFT_PARALLEL_BUILD_COUNT
+      make INSTALL_ROOT="$CRAFT_PART_INSTALL/tmp" install
+      cp -a "$CRAFT_PART_INSTALL/tmp$CRAFT_STAGE/." "$CRAFT_PART_INSTALL"
+      rm -r "$CRAFT_PART_INSTALL/tmp"
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtx11extras:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtx11extras.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtx11extras/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtx11extras/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtx11extras/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtx11extras/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     build-packages:
       - libfontconfig1-dev
       - libfreetype6-dev
@@ -679,56 +658,30 @@ parts:
       - libxcb-glx0-dev
       - libxcb-sync0-dev
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtgamepad:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtgamepad.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgamepad/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgamepad/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgamepad/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgamepad/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtimageformats:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtimageformats.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtimageformats/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtimageformats/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtimageformats/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtimageformats/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
     build-packages:
       - libtiff5-dev
       - libmng-dev
@@ -740,220 +693,106 @@ parts:
     source: git://code.qt.io/qt/qtnetworkauth.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtnetworkauth/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtnetworkauth/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtnetworkauth/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtnetworkauth/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtserialport:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtserialport.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialport/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialport/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialport/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialport/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtremoteobjects:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtremoteobjects.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtremoteobjects/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtremoteobjects/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtremoteobjects/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtremoteobjects/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtsvg:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtsvg.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsvg/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsvg/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsvg/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsvg/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtscript:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtscript.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscript/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscript/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscript/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscript/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtdeclarative:
     after: [ qtxmlpatterns ]
     source: git://code.qt.io/qt/qtdeclarative.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdeclarative/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdeclarative/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdeclarative/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdeclarative/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtwayland:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtwayland.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwayland/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwayland/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwayland/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwayland/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qttools:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qttools.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttools/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttools/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttools/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttools/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    build-packages:
+      - libclang-dev
+      - llvm-dev
     stage-packages:
-      - libclang1-6.0
-      - libllvm6.0
+      - libclang1-14
+      - libllvm14
   qtconnectivity:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtconnectivity.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtconnectivity/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtconnectivity/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtconnectivity/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtconnectivity/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
     build-packages:
       - libbluetooth-dev
     stage-packages:
@@ -963,128 +802,66 @@ parts:
     source: git://code.qt.io/qt/qtcharts.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtcharts/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtcharts/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtcharts/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtcharts/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtdoc:
-    after: [ qtdeclarative ]
+    after: [ qtdeclarative, qttools ]
     source: git://code.qt.io/qt/qtdoc.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
     build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-      - QT_INSTALL_DOCS: $SNAPCRAFT_PART_INSTALL/usr/share/qt5/doc
+      - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+      - QT_INSTALL_DOCS: $CRAFT_PART_INSTALL/usr/share/qt5/doc
     override-build: |
-      # $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -query
       $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake
       make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT docs
-      # make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      # cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdoc/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdoc/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdoc/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdoc/src/.git
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtlottie:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtlottie.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlottie/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlottie/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlottie/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlottie/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtgraphicaleffects:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtgraphicaleffects.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgraphicaleffects/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgraphicaleffects/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgraphicaleffects/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtgraphicaleffects/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtmultimedia:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtmultimedia.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtmultimedia/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtmultimedia/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtmultimedia/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtmultimedia/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     stage:
       # remove ffmpeg libs as they come from ffmpeg part
-      - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libavcodec.so.58*
-      - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libavutil.so.56*
-      - -usr/lib/$SNAPCRAFT_ARCH_TRIPLET/libswresample.so.3*
+      - -usr/lib/$CRAFT_ARCH_TRIPLET/libavcodec.so.*
+      - -usr/lib/$CRAFT_ARCH_TRIPLET/libavutil.so.*
+      - -usr/lib/$CRAFT_ARCH_TRIPLET/libswresample.so.*
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
     build-packages:
       - libgstreamer1.0-dev
       - libgstreamer-plugins-base1.0-dev
@@ -1099,386 +876,191 @@ parts:
     source: git://code.qt.io/qt/qtquick3d.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquick3d/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquick3d/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquick3d/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquick3d/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtquickcontrols:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtquickcontrols.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickcontrols/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickcontrols/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickcontrols/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickcontrols/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtscxml:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtscxml.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscxml/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscxml/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscxml/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtscxml/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtquicktimeline:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtquicktimeline.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquicktimeline/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquicktimeline/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquicktimeline/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquicktimeline/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtsensors:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtsensors.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsensors/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsensors/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsensors/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtsensors/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtwebchannel:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtwebchannel.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebchannel/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebchannel/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebchannel/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebchannel/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtwebsockets:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtwebsockets.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebsockets/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebsockets/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebsockets/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebsockets/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qt3d:
     after: [ qtdeclarative, qtimageformats ]
     source: git://code.qt.io/qt/qt3d.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qt3d/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qt3d/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qt3d/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qt3d/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtquickcontrols2:
     after: [ qtdeclarative, qtquickcontrols ]
     source: git://code.qt.io/qt/qtquickcontrols2.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickcontrols2/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickcontrols2/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickcontrols2/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtquickcontrols2/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtlocation:
     after: [ qtquickcontrols, qtserialport ]
     source: git://code.qt.io/qt/qtlocation.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlocation/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlocation/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlocation/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtlocation/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     build-packages:
       - libgeoclue-2-dev
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtdatavis3d:
     after: [ qtmultimedia ]
     source: git://code.qt.io/qt/qtdatavis3d.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdatavis3d/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdatavis3d/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdatavis3d/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtdatavis3d/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtspeech:
     after: [ qtmultimedia ]
     source: git://code.qt.io/qt/qtspeech.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtspeech/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtspeech/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtspeech/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtspeech/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtserialbus:
     after: [ qtserialport ]
     source: git://code.qt.io/qt/qtserialbus.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialbus/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialbus/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialbus/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtserialbus/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qttranslations:
     after: [ qttools ]
     source: git://code.qt.io/qt/qttranslations.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttranslations/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttranslations/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttranslations/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qttranslations/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtwebglplugin:
     after: [ qtwebsockets ]
     source: git://code.qt.io/qt/qtwebglplugin.git
     source-tag: v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl
     plugin: nil
-    build-environment:
-      - LD_LIBRARY_PATH: $SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET:$LD_LIBRARY_PATH
-      - PATH: $SNAPCRAFT_STAGE/usr/bin:$PATH
-    override-build: |
-      $SNAPCRAFT_STAGE/usr/lib/qt5/bin/qmake -qtconf "$SNAPCRAFT_STAGE/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt5/qt.conf"
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      make INSTALL_ROOT="$SNAPCRAFT_PART_INSTALL/tmp" install
-      cp -a "$SNAPCRAFT_PART_INSTALL/tmp$SNAPCRAFT_STAGE/." "$SNAPCRAFT_PART_INSTALL"
-      rm -r "$SNAPCRAFT_PART_INSTALL/tmp"
-    override-stage: |
-      snapcraftctl stage
-      # Cleanup space on build VM to prevent running out of disk space for later parts
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebglplugin/build/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebglplugin/src/*
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebglplugin/build/.git
-      rm -rf $SNAPCRAFT_STAGE/../parts/qtwebglplugin/src/.git
+    build-environment: *buildenv
+    override-build: *qtbuild
+    override-stage: *override-stage-steps
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtwebengine:
     plugin: nil
     override-build: |
       if [ $SNAPCRAFT_TARGET_ARCH != "ppc64el" ]; then
-        snap install nightmayr-qtwebengine-5-15-9-2004 --candidate && returncode=$? || returncode=$?
+        snap install nightmayr-qtwebengine-5-15-10-2204 --candidate && returncode=$? || returncode=$?
         # This conditional ensures the SDK is built without Webengine for the first revision.
         # The QtWebengine snap is then able to use this SDK snap to build Webengine, allowing it to be included in subsequent revisions of this snap.
         if [ $returncode -ne 0 ]; then
-      cat << EOF > "$SNAPCRAFT_PART_INSTALL/qtwebengine-missing.txt"
+      cat << EOF > "$CRAFT_PART_INSTALL/qtwebengine-missing.txt"
       QtWebengine has not been built and included in this revision of the snap.
       This is likely due to this Qt SDK snap not being available for QtWebengine to use as build dependency preventing it from be built in a separate snap.
       The QtWebengine snap would subsequently be staged from in this QT SDK snap (chicken and egg problem).
       EOF
         else
-          rsync -a --ignore-existing /snap/nightmayr-qtwebengine-5-15-9-2004/current/ $SNAPCRAFT_PART_INSTALL
+          rsync -a --ignore-existing /snap/nightmayr-qtwebengine-5-15-10-2204/current/ $CRAFT_PART_INSTALL
         fi
       else
         echo "QtWebengine can not be built for ppc64el, skipping"
         exit 0
       fi
     prime:
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
     stage-packages:
       - libnspr4
       - libnss3
