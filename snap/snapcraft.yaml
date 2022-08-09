@@ -107,6 +107,11 @@ parts:
       - --enable-strip
       - --libdir=/usr/lib/$CRAFT_ARCH_TRIPLET
       - --incdir=/usr/include/$CRAFT_ARCH_TRIPLET
+    override-build: |
+      craftctl default
+      execstack --clear-execstack $CRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/libx264.so.*
+    build-packages:
+      - execstack
     prime:
       - usr/lib
       - -usr/lib/pkgconfig
