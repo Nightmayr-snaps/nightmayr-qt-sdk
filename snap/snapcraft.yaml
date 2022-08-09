@@ -40,7 +40,6 @@ parts:
     - "-usr/share/man"
     - "-usr/share/pkgconfig"
 
-  # ffmpeg and sdl2
   sdl2:
     source: https://github.com/libsdl-org/SDL.git
     source-tag: release-2.0.22
