@@ -1083,19 +1083,6 @@ parts:
     prime:
       - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
-  # # qtlocation:
-  # #   after: [ qtquickcontrols, qtserialport ]
-  # #   source: git://code.qt.io/qt/qtlocation.git
-  # #   source-tag: v$SNAPCRAFT_PROJECT_VERSION
-  # #   plugin: cmake
-  # #   build-environment: *buildenv
-  # #   override-build: *qtbuild
-  # #   override-stage: *override-stage-steps
-  # #   build-packages:
-  # #     - libgeoclue-2-dev
-  # #   prime:
-  # #     - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-  # #     - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtdatavis3d:
     after: [ qtbase, qtmultimedia ]
     source: git://code.qt.io/qt/qtdatavis3d.git
@@ -1114,17 +1101,6 @@ parts:
     prime:
       - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
       - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
-  # # qtspeech:
-  # #   after: [ qtmultimedia ]
-  # #   source: git://code.qt.io/qt/qtspeech.git
-  # #   source-tag: v$SNAPCRAFT_PROJECT_VERSION
-  # #   plugin: cmake
-  # #   build-environment: *buildenv
-  # #   override-build: *qtbuild
-  # #   override-stage: *override-stage-steps
-  # #   prime:
-  # #     - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-  # #     - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
   qtserialbus:
     after: [ qtbase, qtserialport ]
     source: git://code.qt.io/qt/qtserialbus.git
