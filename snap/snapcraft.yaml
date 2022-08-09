@@ -481,6 +481,7 @@ parts:
     stage:
     - -./usr/lib/$CRAFT_ARCH_TRIPLET/libaom.so.*
     - -./usr/lib/$CRAFT_ARCH_TRIPLET/libdav1d.so.*
+    - -./usr/lib/$CRAFT_ARCH_TRIPLET/libx264.so.*
   qtbase:
     after: [ ffmpeg, mesa ]
     plugin: cmake
