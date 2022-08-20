@@ -109,7 +109,9 @@ parts:
       - --incdir=/usr/include/$CRAFT_ARCH_TRIPLET
     override-build: |
       craftctl default
-      execstack --clear-execstack $CRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/libx264.so.*
+      if [ $CRAFT_TARGET_ARCH = "armhf" ]; then
+          execstack --clear-execstack $CRAFT_PART_INSTALL/usr/lib/$CRAFT_ARCH_TRIPLET/libx264.so.*
+      fi
     build-packages:
       - execstack
     prime:
@@ -1198,7 +1200,7 @@ parts:
     after: [ qtwebchannel, qtdeclarative, qtsvg ]
     plugin: nil
     override-build: |
-      if [ $SNAPCRAFT_TARGET_ARCH != "ppc64el" ]; then
+      if [ $CRAFT_TARGET_ARCH != "ppc64el" ]; then
         snap install nightmayr-qtwebengine-6-3-1-2204 --candidate && returncode=$? || returncode=$?
         # This conditional ensures the SDK is built without Webengine for the first revision.
         # The QtWebengine snap is then able to use this SDK snap to build Webengine, allowing it to be included in subsequent revisions of this snap.
