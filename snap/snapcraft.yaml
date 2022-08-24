@@ -1,5 +1,5 @@
 ---
-name: nightmayr-qt-6-3-1-2204-sdk
+name: nightmayr-qt-6-3-1-2204
 version: 6.3.1
 base: core22
 summary: Shared Qt 6
@@ -8,6 +8,11 @@ description: |
  Qt Applications.
 confinement: strict
 grade: stable
+slots:
+  nightmayr-qt-6-3-1-2204:
+    interface: content
+    read:
+      - /
 architectures:
   - build-on: amd64
   - build-on: arm64
@@ -661,6 +666,16 @@ parts:
       - libxkbcommon-x11-0
       - libxkbcommon0
       - libxrandr2
+    prime: &qtexclusions
+      - -./usr/include
+      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/cmake
+      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pkgconfig
+      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt6/bin
+      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt6/mkspecs
+      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/qt6/examples
+      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.la
+      - -./usr/lib/$SNAPCRAFT_ARCH_TRIPLET/*.prl
+      - -./usr/lib/qt6
   qtimageformats:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtimageformats.git
@@ -675,9 +690,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
     build-packages:
       - libtiff5-dev
       - libmng-dev
@@ -698,9 +711,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtserialport:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtserialport.git
@@ -715,9 +726,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtremoteobjects:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtremoteobjects.git
@@ -732,9 +741,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtsvg:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtsvg.git
@@ -749,9 +756,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qt5compat:
     after: [ qtbase, qtdeclarative ]
     source: git://code.qt.io/qt/qt5compat.git
@@ -768,9 +773,7 @@ parts:
     # build-environment: &buildenv
     #   - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET:/usr/lib/$CRAFT_ARCH_TRIPLET${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtshadertools:
     after: [ qtbase ]
     source: git://code.qt.io/qt/qtshadertools.git
@@ -787,9 +790,7 @@ parts:
     # build-environment: &buildenv
     #   - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET:/usr/lib/$CRAFT_ARCH_TRIPLET${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtdeclarative:
     after: [ qtbase, qtshadertools ]
     source: git://code.qt.io/qt/qtdeclarative.git
@@ -806,9 +807,7 @@ parts:
     build-environment: &buildenv
       - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET:/usr/lib/$CRAFT_ARCH_TRIPLET${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtwayland:
     after: [ qtbase, qtdeclarative ]
     source: git://code.qt.io/qt/qtwayland.git
@@ -824,9 +823,7 @@ parts:
       - --log-level=STATUS
     build-environment: *buildenv
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qttools:
     after: [ qtbase, qtdeclarative ]
     source: git://code.qt.io/qt/qttools.git
@@ -849,9 +846,7 @@ parts:
     #   cmake --build . -- -j${SNAPCRAFT_PARALLEL_BUILD_COUNT}
     #   cmake --build . --target install
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
     build-packages:
       - libclang-dev
       - llvm-dev
@@ -873,9 +868,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
     build-packages:
       - libbluetooth-dev
     stage-packages:
@@ -895,9 +888,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtdoc:
     after: [ qtdeclarative, qttools ]
     source: git://code.qt.io/qt/qtdoc.git
@@ -916,9 +907,7 @@ parts:
       - LD_LIBRARY_PATH: $CRAFT_STAGE/usr/lib/$CRAFT_ARCH_TRIPLET${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
       - QT_INSTALL_DOCS: $CRAFT_PART_INSTALL/usr/share/qt6/doc
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtlottie:
     after: [ qtdeclarative, qtquick3d ]
     source: git://code.qt.io/qt/qtlottie.git
@@ -934,9 +923,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtmultimedia:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtmultimedia.git
@@ -957,9 +944,7 @@ parts:
       - -usr/lib/$CRAFT_ARCH_TRIPLET/libavcodec.so.*
       - -usr/lib/$CRAFT_ARCH_TRIPLET/libavutil.so.*
       - -usr/lib/$CRAFT_ARCH_TRIPLET/libswresample.so.*
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
     build-packages:
       - libgstreamer1.0-dev
       - libgstreamer-plugins-base1.0-dev
@@ -984,9 +969,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtscxml:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtscxml.git
@@ -1001,9 +984,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtquicktimeline:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtquicktimeline.git
@@ -1018,9 +999,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtsensors:
     after: [ qtdeclarative, qtsvg ]
     source: git://code.qt.io/qt/qtsensors.git
@@ -1035,9 +1014,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtwebchannel:
     after: [ qtdeclarative, qtwebsockets ]
     source: git://code.qt.io/qt/qtwebchannel.git
@@ -1052,9 +1029,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtwebsockets:
     after: [ qtdeclarative ]
     source: git://code.qt.io/qt/qtwebsockets.git
@@ -1069,9 +1044,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qt3d:
     after: [ qtdeclarative, qtimageformats, qtmultimedia ]
     source: git://code.qt.io/qt/qt3d.git
@@ -1086,9 +1059,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtdatavis3d:
     after: [ qtbase, qtmultimedia ]
     source: git://code.qt.io/qt/qtdatavis3d.git
@@ -1104,9 +1075,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtserialbus:
     after: [ qtbase, qtserialport ]
     source: git://code.qt.io/qt/qtserialbus.git
@@ -1122,9 +1091,7 @@ parts:
       - -DCMAKE_VERBOSE_MAKEFILE=ON
       - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtpositioning:
       after: [ qtbase, qtserialport ]
       source: git://code.qt.io/qt/qtpositioning.git
@@ -1140,9 +1107,7 @@ parts:
         - -DCMAKE_VERBOSE_MAKEFILE=ON
         - --log-level=STATUS
       override-stage: *override-stage-steps
-      prime:
-        - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-        - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+      prime: *qtexclusions
   qtvirtualkeyboard:
       after: [ qtbase, qtdeclarative, qtsvg ]
       source: git://code.qt.io/qt/qtvirtualkeyboard.git
@@ -1158,9 +1123,7 @@ parts:
         - -DCMAKE_VERBOSE_MAKEFILE=ON
         - --log-level=STATUS
       override-stage: *override-stage-steps
-      prime:
-        - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-        - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+      prime: *qtexclusions
   qtwebview:
       after: [ qtbase, qtwebengine ]
       source: git://code.qt.io/qt/qtwebview.git
@@ -1176,9 +1139,7 @@ parts:
         - -DCMAKE_VERBOSE_MAKEFILE=ON
         - --log-level=STATUS
       override-stage: *override-stage-steps
-      prime:
-        - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-        - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+      prime: *qtexclusions
   qttranslations:
     after: [ qttools ]
     source: git://code.qt.io/qt/qttranslations.git
@@ -1193,9 +1154,7 @@ parts:
         - -DCMAKE_VERBOSE_MAKEFILE=ON
         - --log-level=STATUS
     override-stage: *override-stage-steps
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
   qtwebengine:
     after: [ qtwebchannel, qtdeclarative, qtsvg ]
     plugin: nil
@@ -1217,9 +1176,7 @@ parts:
         echo "QtWebengine can not be built for ppc64el, skipping"
         exit 0
       fi
-    prime:
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.la
-      - -./usr/lib/$CRAFT_ARCH_TRIPLET/*.prl
+    prime: *qtexclusions
     stage-packages:
       - libnspr4
       - libnss3
