@@ -92,9 +92,6 @@ parts:
       - -DCMAKE_CXX_FLAGS_RELEASE=-s
       - -DENABLE_LOGGING=OFF
       - -DENABLE_STATIC=OFF
-    prime:
-      - -usr/include
-      - -usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig
 
   x264:
     source: https://code.videolan.org/videolan/x264.git
@@ -114,9 +111,6 @@ parts:
       fi
     build-packages:
       - execstack
-    prime:
-      - usr/lib
-      - -usr/lib/pkgconfig
 
   aom:
     source: https://aomedia.googlesource.com/aom.git
@@ -162,9 +156,7 @@ parts:
     build-packages:
       - yasm
     prime:
-      - -usr/include
       - -usr/lib/$CRAFT_ARCH_TRIPLET/libaom.a
-      - -usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig
 
   dav1d:
     source: https://code.videolan.org/videolan/dav1d.git
@@ -180,9 +172,6 @@ parts:
       - meson
       - doxygen
       - nasm
-    prime:
-      - -usr/include
-      - -usr/lib/$CRAFT_ARCH_TRIPLET/pkgconfig
 
   zimg:
     source: https://github.com/sekrit-twc/zimg.git
@@ -194,10 +183,8 @@ parts:
       - --includedir=/usr/include
       - --build=$CRAFT_ARCH_TRIPLET
     prime:
-      - -usr/include
       - -usr/lib/*.a
       - -usr/lib/*.la
-      - -usr/lib/pkgconfig
 
   ffnvcodec:
     source: https://github.com/FFmpeg/nv-codec-headers.git
@@ -212,7 +199,7 @@ parts:
   ffmpeg:
     after: [ ffnvcodec, aom, dav1d, x264, srt, zimg, sdl2 ]
     source: https://git.ffmpeg.org/ffmpeg.git
-    source-tag: release/5.1
+    source-tag: n5.1.1
     plugin: autotools
     override-build: |
       ARCHITECTURE=$(dpkg --print-architecture)
