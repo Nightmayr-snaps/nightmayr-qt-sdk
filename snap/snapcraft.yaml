@@ -1224,3 +1224,29 @@ parts:
       - libnspr4
       - libnss3
       - libxtst6
+
+  conditioning:
+    after: [ qtimageformats, qt5compat, qtcharts, qtconnectivity, qtdatavis3d, qttools, qtdoc, qtquick3d, qtlottie, qtnetworkauth, qtserialport, qtpositioning, qtquicktimeline, qtremoteobjects, qtscxml, qtsensors, qtserialbus, qttranslations, qtvirtualkeyboard, qtmultimedia, qt3d, qtwayland, qtwebview, qtwebengine ]
+    plugin: nil
+    build-environment: *buildenv
+    override-prime: |
+      set -eux
+      craftctl default
+
+      for PC in $(find . -path "*/pkgconfig/*.pc")
+      do
+        sed -i 's#prefix=$CRAFT_STAGE#prefix=/snap/$CRAFT_PROJECT_NAME/current#' $PC
+        sed -i 's#prefix = /usr#prefix=/snap/$CRAFT_PROJECT_NAME/current/usr#' $PC
+        sed -i 's#prefix=/usr#prefix=/snap/$CRAFT_PROJECT_NAME/current/usr#' $PC
+        sed -i 's#original_prefix=/snap/$CRAFT_PROJECT_NAME/current/usr#original_prefix=/usr#' $PC
+
+        sed -i 's#libdir=/usr#libdir=${prefix}#' $PC
+        sed -i 's#libdir=/lib#libdir=/snap/$CRAFT_PROJECT_NAME/current/lib#' $PC
+
+        sed -i 's#exec_prefix=/usr#exec_prefix=${prefix}#' $PC
+        sed -i 's#includedir=/usr#includedir=${prefix}#' $PC
+        sed -i 's#sysconfdir=/etc#sysconfdir=/snap/$CRAFT_PROJECT_NAME/current/etc#' $PC
+
+        sed -i 's#/usr/#/snap/$CRAFT_PROJECT_NAME/current/usr/#g' $PC
+        sed -i 's#/etc/#/snap/$CRAFT_PROJECT_NAME/current/etc/#g' $PC
+      done
