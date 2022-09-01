@@ -201,6 +201,10 @@ parts:
     source: https://git.ffmpeg.org/ffmpeg.git
     source-tag: n5.1.1
     plugin: autotools
+    override-pull: |
+      craftctl default
+      # Apply patch to allow Qtwebengine to compile against ffmpeg v5+, patch originated from Arch Linux: https://github.com/archlinux/svntogit-packages/blob/20d3dd9476bf9bfd77eed044e2e1302bc846671c/trunk/add-av_stream_get_first_dts-for-chromium.patch
+      find $CRAFT_PROJECT_DIR/snap/local/patches/ffmpeg -type f -print0 | sort -z | xargs -r0 git apply
     override-build: |
       ARCHITECTURE=$(dpkg --print-architecture)
       if [ "${ARCHITECTURE}" = "amd64" ]; then
@@ -1235,5 +1239,6 @@ parts:
         sed -i 's#sysconfdir=/etc#sysconfdir=/snap/$CRAFT_PROJECT_NAME/current/etc#' $PC
 
         sed -i 's#/usr/#/snap/$CRAFT_PROJECT_NAME/current/usr/#g' $PC
+        sed -i 's#$CRAFT_STAGE##g' $PC
         sed -i 's#/etc/#/snap/$CRAFT_PROJECT_NAME/current/etc/#g' $PC
       done
