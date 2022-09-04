@@ -288,7 +288,6 @@ parts:
       --enable-libdc1394 \
       --enable-libdrm \
       --enable-libiec61883 \
-      --enable-chromaprint \
       --enable-frei0r \
       --enable-libx264 ${EXTRA}
       make -j $(nproc)
@@ -304,7 +303,7 @@ parts:
       - libcaca-dev
       - libcdio-dev
       - libcdio-paranoia-dev
-      - libchromaprint-dev
+      # - libchromaprint-dev
       - libcodec2-dev
       - libdc1394-dev
       - libdrm-dev
@@ -380,7 +379,7 @@ parts:
       - libcdio-cdda2
       - libcdio-paranoia2
       - libcdio19
-      - libchromaprint1
+      # - libchromaprint1
       - libcodec2-1.0
       - libdatrie1
       - libdc1394-25
