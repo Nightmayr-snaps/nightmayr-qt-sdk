@@ -14,8 +14,8 @@ slots:
     read:
       - /
 plugs:
-  nightmayr-kde-plasma-integration-5-2004:
-    default-provider: nightmayr-kde-plasma-integration-5-2004
+  nightmayr-plasma-integration-5-2004:
+    default-provider: nightmayr-plasma-integration-5-2004
     interface: content
     target: $SNAP/kf5
   nightmayr-qgnomeplatform-qt5-2004:
