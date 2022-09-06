@@ -21,7 +21,7 @@ plugs:
   nightmayr-qgnomeplatform-qt5-2004:
     default-provider: nightmayr-qgnomeplatform-qt5-2004
     interface: content
-    target: $SNAP/qgnomeplatform
+    target: /snap/nightmayr-qt-5-15-4-2004/current/qgnomeplatform
 architectures:
   - build-on: amd64
   - build-on: arm64
