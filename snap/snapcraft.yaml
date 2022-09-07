@@ -596,6 +596,7 @@ parts:
       - libodbc1
       - libpcre2-16-0
       - libpixman-1-0
+      - libpulse-mainloop-glib0
       - libpq5
       - libroken18-heimdal
       - libsasl2-2
