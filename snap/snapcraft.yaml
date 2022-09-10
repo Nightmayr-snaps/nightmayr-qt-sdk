@@ -597,7 +597,6 @@ parts:
       - libodbc1
       - libpcre2-16-0
       - libpixman-1-0
-      - libpulse-mainloop-glib0
       - libpq5
       - libroken18-heimdal
       - libsasl2-2
@@ -1490,6 +1489,24 @@ parts:
       - qtwebchannel
       - qtquickcontrols2
       - qtsvg
+
+    # caches:
+    #   plugin: nil
+    # after: [ conditioning ]
+    #   build-packages:
+    #     - gtk-update-icon-cache
+    #     - libglib2.0-bin
+    #     - shared-mime-info
+    #   override-build: |
+    #     set -eux
+    #     snapcraftctl build
+    #     glib-compile-schemas $SNAPCRAFT_STAGE/usr/share/glib-2.0/schemas
+    #     update-mime-database $SNAPCRAFT_STAGE/usr/share/mime
+    #     for dir in $SNAPCRAFT_STAGE/usr/share/icons/*; do
+    #       if [ -f "$dir/index.theme" ]; then
+    #         gtk-update-icon-cache --force "$dir"
+    #       fi
+    #     done
 
   conditioning:
     after: [ qtimageformats, qtgamepad, qtgraphicaleffects, qtscript, qtspeech, qtwebsockets, qtwebglplugin, qtx11extras, qtcharts, qtconnectivity, qtdatavis3d, qttools, qtdoc, qtquick3d, qtlottie, qtnetworkauth, qtserialport, qtquicktimeline, qtremoteobjects, qtscxml, qtsensors, qtserialbus, qttranslations, qtmultimedia, qt3d, qtwayland, qtwebengine ]
