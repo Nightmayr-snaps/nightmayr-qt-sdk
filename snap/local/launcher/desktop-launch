@@ -211,6 +211,7 @@ prepend_dir XDG_CONFIG_DIRS "$SNAP_DESKTOP_RUNTIME/etc/xdg"
 prepend_dir XDG_CONFIG_DIRS "$SNAP/etc/xdg"
 
 # Define snaps' own data dir
+prepend_dir XDG_DATA_DIRS "$SNAP_KF_RUNTIME/usr/share"
 prepend_dir XDG_DATA_DIRS "$SNAP_DESKTOP_RUNTIME/usr/share"
 prepend_dir XDG_DATA_DIRS "$SNAP/usr/share"
 prepend_dir XDG_DATA_DIRS "$SNAP/share"
@@ -423,6 +424,7 @@ if [ "$needs_update" = true ]; then
   if [ ! -f "$SNAP_DESKTOP_RUNTIME/usr/share/mime/mime.cache" ]; then
     if command -v update-mime-database >/dev/null; then
       cp --preserve=timestamps -dR "$SNAP_DESKTOP_RUNTIME/usr/share/mime" "$XDG_DATA_HOME"
+      cp --preserve=timestamps -dR "$SNAP_KF_RUNTIME/usr/share/mime" "$XDG_DATA_HOME"
       async_exec update-mime-database "$XDG_DATA_HOME/mime"
     fi
   fi
