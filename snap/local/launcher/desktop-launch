@@ -141,8 +141,8 @@ function is_subpath() {
   [ "${dir##"${parent}"/}" != "${dir}" ] && return 0 || return 1
 }
 
-if ! snapctl is-connected "nightmayr-qt-5-15-4-2004"; then
-  echo "ERROR: not connected to the nightmayr-qt-5-15-4-2004 content interface."
+if ! snapctl is-connected "nightmayr-qt-5-15-6-2204"; then
+  echo "ERROR: not connected to the nightmayr-qt-5-15-6-2204 content interface."
   exit 1
 fi
 

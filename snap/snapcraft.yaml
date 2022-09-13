@@ -1,7 +1,7 @@
 ---
-name: nightmayr-qt-5-15-4-2004
-version: 5.15.4
-base: core20
+name: nightmayr-qt-5-15-6-2204
+version: 5.15.6
+base: core22
 summary: Shared Qt 5.15
 description: |
  This snap contains the necessary libraries required by
@@ -9,19 +9,10 @@ description: |
 confinement: strict
 grade: stable
 slots:
-  nightmayr-qt-5-15-4-2004:
+  nightmayr-qt-5-15-6-2204:
     interface: content
     read:
       - /
-plugs:
-  nightmayr-plasma-integration-5-2004:
-    default-provider: nightmayr-plasma-integration-5-2004
-    interface: content
-    target: $SNAP/kf5
-  nightmayr-qgnomeplatform-qt5-2004:
-    default-provider: nightmayr-qgnomeplatform-qt5-2004
-    interface: content
-    target: /snap/nightmayr-qt-5-15-4-2004/current/qgnomeplatform
 architectures:
   - build-on: amd64
   - build-on: arm64
@@ -32,7 +23,7 @@ parts:
   qt-sdk:
     plugin: nil
     stage-snaps:
-      - nightmayr-qt-5-15-4-2004-sdk
+      - nightmayr-qt-5-15-6-2204-sdk
     stage:
       - -usr/include
       - -usr/lib/$CRAFT_ARCH_TRIPLET/cmake
