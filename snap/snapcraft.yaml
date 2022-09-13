@@ -40,7 +40,6 @@ parts:
     - "-usr/share/man"
     - "-usr/share/pkgconfig"
 
-  # ffmpeg and sdl2
   sdl2:
     source: https://github.com/libsdl-org/SDL.git
     source-tag: release-2.0.22
@@ -203,7 +202,6 @@ parts:
       - -usr/include
       - -usr/lib/pkgconfig
 
-  # Resemble ubuntu jammy (22.04) ffmpeg build
   ffmpeg:
     after: [ ffnvcodec, aom, dav1d, x264, srt, zimg, sdl2 ]
     source: https://git.ffmpeg.org/ffmpeg.git
