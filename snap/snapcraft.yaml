@@ -486,7 +486,7 @@ parts:
     after: [ ffmpeg, mesa ]
     plugin: nil
     override-pull: |
-      QT=5_15_5
+      QT=5_15_6
       git clone -b v$SNAPCRAFT_PROJECT_VERSION-lts-lgpl --depth=1 git://code.qt.io/qt/qt5.git .
       perl init-repository --module-subset=qtbase
       git submodule update qtbase
