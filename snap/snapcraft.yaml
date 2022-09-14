@@ -388,7 +388,7 @@ parts:
       - libcdio-cdda2
       - libcdio-paranoia2
       - libcdio19
-      # - libchromaprint1
+      # - libchromaprint1 #removing chromaprint as it pulls in older ffmpeg and x264 libs
       - libcodec2-1.0
       - libdatrie1
       - libdc1394-25
