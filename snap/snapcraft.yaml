@@ -570,6 +570,7 @@ parts:
       - llvm-dev
       - unixodbc-dev
     stage-packages:
+      - gsettings-desktop-schemas
       - libasn1-8-heimdal
       - libatk-bridge2.0-0
       - libatk1.0-0
