@@ -36,3 +36,13 @@ parts:
       - -usr/**/*.a
       - -usr/**/*.la
       - -usr/**/*.prl
+  command-chain:
+    source: https://github.com/snapcore/snapcraft-desktop-integration.git
+    source-type: git
+    source-subdir: qt5
+    plugin: make
+    override-pull: |
+      craftctl default
+      find $CRAFT_PROJECT_DIR/snap/local/patches -type f -print0 | sort -z | xargs -r0 git apply
+    make-parameters:
+      - PLATFORM_PLUG=$CRAFT_PROJECT_NAME
