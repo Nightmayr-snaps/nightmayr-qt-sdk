@@ -36,6 +36,10 @@ parts:
       - -usr/**/*.a
       - -usr/**/*.la
       - -usr/**/*.prl
+  debs:
+    plugin: nil
+    stage-packages:
+      - locales-all
   command-chain:
     source: https://github.com/snapcore/snapcraft-desktop-integration.git
     source-type: git
